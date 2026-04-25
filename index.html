@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 專案首頁</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', '微軟雅黑', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 800px;
+            width: 90%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        section {
+            margin: 30px 0;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 10px 5px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        ul {
+            margin-left: 20px;
+            color: #666;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 ESP32 專案</h1>
+            <p class="subtitle">IoT 開發平台</p>
+        </header>
+
+        <section>
+            <h2>歡迎</h2>
+            <p>
+                這是一個簡潔的靜態網頁示例。ESP32 是一個功能強大的微控制器，
+                非常適合物聯網 (IoT) 應用開發。
+            </p>
+        </section>
+
+        <section>
+            <h2>主要特性</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <h3>⚡ 高性能</h3>
+                    <p>雙核 CPU，主頻高達 240MHz，性能強大</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📡 連接</h3>
+                    <p>支援 WiFi 和藍牙，連接方式多樣</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💾 存儲</h3>
+                    <p>內置 520KB SRAM，支援外部 Flash</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔌 豐富接口</h3>
+                    <p>GPIO、SPI、I2C、UART 等多種接口</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>快速開始</h2>
+            <ul>
+                <li>安裝 ESP32 開發環境</li>
+                <li>選擇合適的開發板</li>
+                <li>編寫程式碼並上傳</li>
+                <li>進行實驗和應用開發</li>
+            </ul>
+        </section>
+
+        <section style="text-align: center;">
+            <h2>現在就開始探索</h2>
+            <a href="https://www.espressif.com/" class="button">官方網站</a>
+            <a href="https://github.com/espressif/esp-idf" class="button">GitHub Repository</a>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 ESP32 專案 | 製作於 {{ 當前日期 }}</p>
+        </footer>
+    </div>
+</body>
+</html>
