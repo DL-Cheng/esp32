@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codespaces 同步指南 - ESP32 專案</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', '微軟雅黑', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb {
+            color: #999;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .intro-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .intro-box p {
+            color: #555;
+        }
+
+        section {
+            margin: 40px 0;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .step {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            margin-right: 15px;
+            margin-bottom: 10px;
+        }
+
+        .step h3 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .step p {
+            color: #555;
+            margin: 10px 0;
+            margin-left: 55px;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            overflow-x: auto;
+            margin: 15px 0;
+            margin-left: 55px;
+            line-height: 1.5;
+        }
+
+        .code-label {
+            color: #bdc3c7;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+            margin-left: 55px;
+        }
+
+        .diagram {
+            background: #f0f4ff;
+            border: 2px dashed #667eea;
+            padding: 20px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #667eea;
+            margin: 20px 0;
+            margin-left: 55px;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .tip {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            margin-left: 55px;
+        }
+
+        .tip-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 5px;
+        }
+
+        .tip p {
+            color: #555;
+            margin: 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            margin-left: 55px;
+        }
+
+        .success-box p {
+            color: #155724;
+            margin: 0;
+        }
+
+        .workflow-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .workflow-title {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .command-summary {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+
+        .faq-section {
+            margin-top: 30px;
+        }
+
+        .faq-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+
+        .faq-question {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .faq-answer {
+            color: #555;
+        }
+
+        .button-group {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 10px 5px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .button-secondary {
+            background: #6c757d;
+            text-decoration: none;
+            color: white;
+        }
+
+        .button-secondary:hover {
+            box-shadow: 0 5px 20px rgba(108, 117, 125, 0.4);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            .step {
+                padding: 20px;
+            }
+
+            .code-block,
+            .diagram,
+            .tip,
+            .success-box {
+                margin-left: 0;
+                font-size: 0.85em;
+            }
+
+            .step-number {
+                display: block;
+                margin-bottom: 15px;
+            }
+
+            .step p {
+                margin-left: 0;
+            }
+
+            .code-label {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="breadcrumb">
+                <a href="index.html">← 返回首頁</a>
+            </div>
+            <h1>📝 Codespaces 同步指南</h1>
+            <p class="subtitle">如何在 Codespaces 中新增檔案並同步到 GitHub</p>
+        </header>
+
+        <div class="intro-box">
+            <p>
+                <strong>📚 本指南將引導您完成整個流程：</strong>
+                從在 GitHub Codespaces 中建立或編輯檔案，到使用 Git 命令將變更同步推送到 GitHub 倉庫。
+                無論您是初學者還是有經驗的開發者，本指南都能幫助您快速完成這些操作。
+            </p>
+        </div>
+
+        <section>
+            <h2>📖 分步驟指南</h2>
+
+            <!-- 步驟 1 -->
+            <div class="step">
+                <span class="step-number">1</span>
+                <h3>開啟 GitHub Codespaces</h3>
+                <p>在您的 GitHub 倉庫頁面上，點擊 <strong>&lt;Code&gt;</strong> 按鈕，然後選擇 <strong>Codespaces</strong> 標籤。</p>
+                <p>點擊 <strong>建立 Codespaces on main</strong>（或您的當前分支名稱）。</p>
+                <div class="diagram">
+  GitHub 倉庫首頁
+         ↓
+  點擊 &lt;Code&gt; 按鈕
+         ↓
+  選擇 Codespaces 標籤
+         ↓
+  點擊 「建立 Codespaces on main」
+         ↓
+  等待 VS Code 環境加載
+                </div>
+                <div class="tip">
+                    <div class="tip-title">💡 提示</div>
+                    <p>第一次啟動可能需要 1-2 分鐘。Codespaces 提供了完整的開發環境，就像在本地執行 VS Code 一樣。</p>
+                </div>
+            </div>
+
+            <!-- 步驟 2 -->
+            <div class="step">
+                <span class="step-number">2</span>
+                <h3>檢查您的倉庫文件</h3>
+                <p>在 VS Code 左側邊欄可以看到「檔案總管」，其中列出了您倉庫中的所有檔案。</p>
+                <p>您可以瀏覽現有檔案的結構，熟悉您的專案佈局。</p>
+                <div class="diagram">
+  Codespaces
+    ├── 檔案總管（左側邊欄）
+    │   ├── index.html
+    │   ├── README.md
+    │   ├── .gitignore
+    │   └── 其他檔案...
+    └── 編輯器區域（中央）
+                </div>
+            </div>
+
+            <!-- 步驟 3 -->
+            <div class="step">
+                <span class="step-number">3</span>
+                <h3>建立新檔案（或編輯現有檔案）</h3>
+                <p><strong>建立新檔案：</strong>右鍵點擊檔案總管中的資料夾，選擇「新增檔案」，輸入檔案名稱。</p>
+                <p><strong>編輯現有檔案：</strong>直接點擊檔案並在編輯器中修改內容。</p>
+                <div class="code-label">示例：建立新的 HTML 文件</div>
+                <div class="code-block">右鍵點擊根目錄
+→ 選擇 「New File」
+→ 輸入 tutorial.html
+→ 在編輯器中輸入內容</div>
+                <div class="success-box">
+                    <p>✅ 當檔案有未保存的更改時，檔案名稱旁會出現白點「●」</p>
+                </div>
+            </div>
+
+            <!-- 步驟 4 -->
+            <div class="step">
+                <span class="step-number">4</span>
+                <h3>保存檔案</h3>
+                <p>在 Codespaces 中，按 <strong>Ctrl+S</strong>（Windows/Linux）或 <strong>Command+S</strong>（Mac）保存檔案。</p>
+                <p>或者使用菜單：<strong>File → Save</strong></p>
+                <div class="tip">
+                    <div class="tip-title">💡 提示</div>
+                    <p>Codespaces 支援自動保存。您可以在設定中啟用此功能：<strong>File → Preferences → Settings</strong>，搜尋「Auto Save」並選擇您的偏好。</p>
+                </div>
+            </div>
+
+            <!-- 步驟 5 -->
+            <div class="step">
+                <span class="step-number">5</span>
+                <h3>開啟終端</h3>
+                <p>點擊上方菜單中的 <strong>Terminal</strong>，然後選擇 <strong>New Terminal</strong>，或按 <strong>Ctrl+`</strong>（反引號）。</p>
+                <p>終端會在 VS Code 下方打開。</p>
+                <div class="diagram">
+  VS Code 窗口
+    ├── 頂部菜單欄
+    │   └── Terminal → New Terminal
+    └── 下方面板
+        └── 終端（命令行界面）
+                </div>
+            </div>
+
+            <!-- 步驟 6 -->
+            <div class="step">
+                <span class="step-number">6</span>
+                <h3>檢查 Git 狀態</h3>
+                <p>在終端中輸入以下命令來檢查您的修改狀態：</p>
+                <div class="code-label">查看 Git 狀態</div>
+                <div class="code-block">git status</div>
+                <p>輸出將顯示：</p>
+                <div class="code-block">On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to stage)
+        modified:   codespaces-tutorial.html
+
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+        new-file.html</div>
+            </div>
+
+            <!-- 步驟 7 -->
+            <div class="step">
+                <span class="step-number">7</span>
+                <h3>新增檔案到 Git（Staging）</h3>
+                <p>在終端中執行以下命令，將所有修改（包括新檔案）新增到 Git 的暫存區：</p>
+                <div class="code-label">新增所有改動的檔案</div>
+                <div class="code-block">git add .</div>
+                <p><strong>或</strong>新增特定檔案：</p>
+                <div class="code-label">新增特定檔案</div>
+                <div class="code-block">git add codespaces-tutorial.html new-file.html</div>
+                <div class="tip">
+                    <div class="tip-title">💡 說明</div>
+                    <p><code>git add .</code> 會新增當前目錄下所有未追蹤或已修改的檔案。<code>.</code> 代表「當前目錄」。</p>
+                </div>
+            </div>
+
+            <!-- 步驟 8 -->
+            <div class="step">
+                <span class="step-number">8</span>
+                <h3>提交變更（Commit）</h3>
+                <p>執行 commit 命令，為您的更改添加一條有意義的提交訊息：</p>
+                <div class="code-label">提交更改</div>
+                <div class="code-block">git commit -m "Add Codespaces tutorial page"</div>
+                <p><strong>提交訊息格式說明：</strong></p>
+                <ul style="margin-left: 70px; margin-top: 10px;">
+                    <li><code>-m</code>：指定提交訊息的標誌</li>
+                    <li>訊息應簡潔明瞭，用英文或中文說明此次提交的目的</li>
+                    <li>良好的實踐是使用祈使句，例如：「Add」、「Fix」、「Update」</li>
+                </ul>
+                <div class="success-box">
+                    <p>✅ 提交成功後，您會看到類似的輸出：<br><code>[main a1b2c3d] Add Codespaces tutorial page</code></p>
+                </div>
+            </div>
+
+            <!-- 步驟 9 -->
+            <div class="step">
+                <span class="step-number">9</span>
+                <h3>推送到 GitHub（Push）</h3>
+                <p>執行 push 命令，將本地提交推送到遠端 GitHub 倉庫：</p>
+                <div class="code-label">推送到 GitHub</div>
+                <div class="code-block">git push</div>
+                <p>系統會自動推送到您的預設遠端分支（通常是 <code>origin main</code>）。</p>
+                <div class="tip">
+                    <div class="tip-title">💡 說明</div>
+                    <p>如果您正在使用具體的分支，也可以執行：<code>git push origin branch-name</code></p>
+                </div>
+                <div class="success-box">
+                    <p>✅ 推送成功後，您會看到類似的輸出：<br><code>To github.com:yourname/repo.git<br>[main a1b2c3d..e4f5g6h] main -> main</code></p>
+                </div>
+            </div>
+
+            <!-- 步驟 10 -->
+            <div class="step">
+                <span class="step-number">10</span>
+                <h3>驗證 GitHub 上的變更</h3>
+                <p>回到 GitHub 網站，刷新您的倉庫頁面，確認新檔案已出現。</p>
+                <p>您可以看到：</p>
+                <ul style="margin-left: 70px; margin-top: 10px;">
+                    <li>新增的檔案在檔案列表中</li>
+                    <li>提交歷史中出現您的提交訊息</li>
+                    <li>提交者和時間戳記</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 完整工作流 -->
+        <section>
+            <h2>⚡ 完整 Git 工作流程</h2>
+            <div class="workflow-section">
+                <div class="workflow-title">1️⃣ 一次性設定（首次使用時）</div>
+                <div class="command-summary">
+# 設定 Git 使用者名稱和郵箱
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+
+# 查看設定
+git config --list
+                </div>
+            </div>
+
+            <div class="workflow-section">
+                <div class="workflow-title">2️⃣ 標準工作流程（每次提交）</div>
+                <div class="command-summary">
+# 步驟 1：查看修改狀態
+git status
+
+# 步驟 2：新增所有修改
+git add .
+
+# 步驟 3：提交修改（包含有意義的訊息）
+git commit -m "Description of your changes"
+
+# 步驟 4：推送到 GitHub
+git push
+                </div>
+            </div>
+
+            <div class="workflow-section">
+                <div class="workflow-title">3️⃣ 其他常用命令</div>
+                <div class="command-summary">
+# 查看提交歷史
+git log --oneline
+
+# 查看特定檔案的修改
+git diff filename.txt
+
+# 撤銷上一次提交（謹慎使用）
+git reset --soft HEAD~1
+
+# 克隆遠端倉庫到本地
+git clone https://github.com/username/repo.git
+
+# 拉取最新更改
+git pull
+                </div>
+            </div>
+        </section>
+
+        <!-- 常見問題 -->
+        <section class="faq-section">
+            <h2>❓ 常見問題</h2>
+
+            <div class="faq-item">
+                <div class="faq-question">Q: 我忘記新增檔案就直接提交了，怎麼辦？</div>
+                <div class="faq-answer">
+                    A: 您可以執行 <code>git add .</code> 再次新增檔案，然後執行 <code>git commit --amend</code> 覆蓋上一次提交。
+                    <div class="code-block">git add .
+git commit --amend --no-edit</div>
+                    然後重新推送：<code>git push --force-with-lease</code>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q: 提交訊息有誤，如何修改？</div>
+                <div class="faq-answer">
+                    A: 執行以下命令修改最後一次提交的訊息：
+                    <div class="code-block">git commit --amend -m "Corrected commit message"</div>
+                    然後重新推送。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q: 推送時出現「Permission denied」錯誤，怎麼辦？</div>
+                <div class="faq-answer">
+                    A: 這通常是因為 SSH 金鑰或認證令牌設定有誤。確保：
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>您的 SSH 金鑰已正確添加到 GitHub 帳戶</li>
+                        <li>或使用個人存取令牌（Personal Access Token）進行認證</li>
+                        <li>Codespaces 環境中的 Git 認證已正確設定</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q: 我想在推送前查看我的修改，如何操作？</div>
+                <div class="faq-answer">
+                    A: 使用以下命令查看差異：
+                    <div class="code-block">git diff              # 查看所有未暫存的修改
+git diff --staged     # 查看已暫存但未提交的修改</div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">Q: 我意外刪除了一個檔案，如何恢復？</div>
+                <div class="faq-answer">
+                    A: 如果檔案未被提交，可以執行：
+                    <div class="code-block">git checkout -- filename.txt</div>
+                    如果檔案已被提交，可以查看歷史版本。
+                </div>
+            </div>
+        </section>
+
+        <!-- 最佳實踐 -->
+        <section>
+            <h2>🎯 Git 提交最佳實踐</h2>
+            <div class="step" style="border-left-color: #28a745;">
+                <h3 style="color: #28a745;">✓ 好的提交訊息範例</h3>
+                <div class="code-block">git commit -m "Add user authentication feature"
+git commit -m "Fix bug in email validation"
+git commit -m "Update documentation for setup process"
+git commit -m "Refactor database connection logic"</div>
+            </div>
+
+            <div class="step" style="border-left-color: #dc3545;">
+                <h3 style="color: #dc3545;">✗ 應避免的提交訊息</h3>
+                <div class="code-block">git commit -m "asdf"
+git commit -m "update"
+git commit -m "fixed bug"
+git commit -m "..."</div>
+            </div>
+
+            <p style="margin-top: 20px; color: #555;">
+                <strong>📌 提交訊息的關鍵點：</strong>
+            </p>
+            <ul style="margin-left: 20px; color: #555;">
+                <li>清晰描述所做的變更</li>
+                <li>使用英文或中文，保持一致</li>
+                <li>使用祈使句（"Add"、"Fix"、"Update" 等）</li>
+                <li>第一個單詞首字母大寫</li>
+                <li>簡潔且有意義（通常 50 字以內）</li>
+            </ul>
+        </section>
+
+        <!-- 下一步 -->
+        <section>
+            <h2>🚀 後續步驟</h2>
+            <p>現在您已掌握基本的 Codespaces 和 Git 工作流程。下一步您可以：</p>
+            <ul>
+                <li>學習分支管理（<code>git branch</code>、<code>git checkout</code>）</li>
+                <li>學習合併分支（<code>git merge</code>）</li>
+                <li>學習拉取請求（Pull Request）工作流程</li>
+                <li>設定 GitHub Actions 進行自動化測試</li>
+                <li>在不同的 Codespaces 環境中進行協作開發</li>
+            </ul>
+        </section>
+
+        <div class="button-group">
+            <a href="index.html" class="button">← 返回首頁</a>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 ESP32 專案 | Codespaces 同步指南</p>
+        </footer>
+    </div>
+</body>
+</html>
