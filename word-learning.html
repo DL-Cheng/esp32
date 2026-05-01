@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>單字學習</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', '微軟雅黑', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 18px 60px rgba(0, 0, 0, 0.18);
+            padding: 36px;
+            max-width: 820px;
+            width: 95%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            color: #764ba2;
+            font-size: 2.4em;
+            margin-bottom: 8px;
+        }
+
+        p.subtitle {
+            color: #555;
+            font-size: 1em;
+        }
+
+        .button,
+        .secondary-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 22px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.96rem;
+            transition: transform 0.25s, box-shadow 0.25s;
+        }
+
+        .secondary-button {
+            background: #f0f0f5;
+            color: #333;
+        }
+
+        .button:hover,
+        .secondary-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(102, 126, 234, 0.25);
+        }
+
+        .control-panel,
+        .question-card,
+        .status-panel {
+            margin-top: 24px;
+        }
+
+        .control-panel {
+            display: grid;
+            gap: 16px;
+        }
+
+        .info-box {
+            background: #f7f7ff;
+            border-left: 4px solid #667eea;
+            padding: 18px 20px;
+            border-radius: 10px;
+            color: #444;
+            line-height: 1.7;
+        }
+
+        .question-card {
+            background: #fafafa;
+            border: 1px solid #e7e7f2;
+            border-radius: 16px;
+            padding: 28px;
+        }
+
+        .question-card h2 {
+            font-size: 1.5rem;
+            color: #3f3d56;
+            margin-bottom: 18px;
+        }
+
+        .question-card .word {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #764ba2;
+            margin-bottom: 16px;
+        }
+
+        .question-card input {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
+
+        .question-card .feedback {
+            min-height: 48px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .status-item {
+            background: #ffffff;
+            border: 1px solid #e6e6f5;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .status-item p {
+            font-size: 0.92rem;
+            color: #666;
+        }
+
+        .status-item span {
+            display: block;
+            margin-top: 8px;
+            font-size: 1.4rem;
+            color: #333;
+            font-weight: 700;
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 32px;
+        }
+
+        .footer-links a {
+            margin: 0 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>單字學習</h1>
+            <p class="subtitle">上傳 word.csv，A 欄中文、B 欄英文，開始練習輸入英文單字。</p>
+        </header>
+
+        <div class="control-panel">
+            <div class="info-box">
+                <p>請上傳包含中文與英文的 CSV 檔案。第一欄為中文，第二欄為英文。若 CSV 含標題行，系統會自動略過。</p>
+            </div>
+
+            <label class="button" for="wordFile">上傳 word.csv</label>
+            <input id="wordFile" type="file" accept=".csv" style="display:none" />
+
+            <div class="status-grid">
+                <div class="status-item">
+                    <p>總單字數</p>
+                    <span id="totalWords">0</span>
+                </div>
+                <div class="status-item">
+                    <p>已完成</p>
+                    <span id="doneCount">0</span>
+                </div>
+                <div class="status-item">
+                    <p>答對</p>
+                    <span id="correctCount">0</span>
+                </div>
+                <div class="status-item">
+                    <p>答錯</p>
+                    <span id="wrongCount">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-card" id="quizArea" style="display:none;">
+            <h2>請輸入下列中文的英文</h2>
+            <div class="word" id="currentChinese">-</div>
+            <input id="answerInput" type="text" autocomplete="off" placeholder="輸入英文並按下 Enter 或提交" />
+            <button class="button" id="submitButton">驗證答案</button>
+            <div class="feedback" id="feedbackText"></div>
+
+            <div class="status-grid">
+                <div class="status-item">
+                    <p>目前回合</p>
+                    <span id="currentRound">0</span>
+                </div>
+                <div class="status-item">
+                    <p>剩餘題數</p>
+                    <span id="remainingCount">0</span>
+                </div>
+                <div class="status-item">
+                    <p>本回合錯誤</p>
+                    <span id="roundErrors">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-links">
+            <button class="secondary-button" id="resetButton">重置遊戲</button>
+            <a class="button" href="index.html">返回首頁</a>
+        </div>
+    </div>
+
+    <script>
+        const wordFile = document.getElementById('wordFile');
+        const quizArea = document.getElementById('quizArea');
+        const currentChinese = document.getElementById('currentChinese');
+        const answerInput = document.getElementById('answerInput');
+        const submitButton = document.getElementById('submitButton');
+        const feedbackText = document.getElementById('feedbackText');
+        const totalWords = document.getElementById('totalWords');
+        const doneCount = document.getElementById('doneCount');
+        const correctCount = document.getElementById('correctCount');
+        const wrongCount = document.getElementById('wrongCount');
+        const currentRound = document.getElementById('currentRound');
+        const remainingCount = document.getElementById('remainingCount');
+        const roundErrors = document.getElementById('roundErrors');
+        const resetButton = document.getElementById('resetButton');
+
+        let words = [];
+        let queue = [];
+        let nextQueue = [];
+        let currentWord = null;
+        let roundNumber = 0;
+        let correctAnswers = 0;
+        let wrongAnswers = 0;
+        let doneAnswers = 0;
+        let roundErrorCount = 0;
+
+        function parseCSV(text) {
+            const rows = [];
+            let current = [];
+            let cell = '';
+            let inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                const ch = text[i];
+                if (inQuotes) {
+                    if (ch === '"') {
+                        if (text[i + 1] === '"') {
+                            cell += '"';
+                            i++;
+                        } else {
+                            inQuotes = false;
+                        }
+                    } else {
+                        cell += ch;
+                    }
+                } else {
+                    if (ch === '"') {
+                        inQuotes = true;
+                    } else if (ch === ',') {
+                        current.push(cell);
+                        cell = '';
+                    } else if (ch === '\r') {
+                        continue;
+                    } else if (ch === '\n') {
+                        current.push(cell);
+                        rows.push(current);
+                        current = [];
+                        cell = '';
+                    } else {
+                        cell += ch;
+                    }
+                }
+            }
+            if (cell || current.length) {
+                current.push(cell);
+                rows.push(current);
+            }
+            return rows;
+        }
+
+        function normalizeAnswer(answer) {
+            return answer.trim().toLowerCase().replace(/\s+/g, ' ');
+        }
+
+        function showStats() {
+            totalWords.textContent = words.length;
+            doneCount.textContent = doneAnswers;
+            correctCount.textContent = correctAnswers;
+            wrongCount.textContent = wrongAnswers;
+            currentRound.textContent = roundNumber;
+            remainingCount.textContent = queue.length;
+            roundErrors.textContent = roundErrorCount;
+        }
+
+        function resetQuiz() {
+            if (!words.length) {
+                alert('請先上傳 word.csv 以開始遊戲。');
+                return;
+            }
+            queue = words.slice();
+            nextQueue = [];
+            roundNumber = 1;
+            correctAnswers = 0;
+            wrongAnswers = 0;
+            doneAnswers = 0;
+            roundErrorCount = 0;
+            feedbackText.textContent = '';
+            answerInput.value = '';
+            quizArea.style.display = 'block';
+            loadNextQuestion();
+            showStats();
+        }
+
+        function loadNextQuestion() {
+            if (queue.length === 0) {
+                if (nextQueue.length > 0) {
+                    queue = nextQueue.slice();
+                    nextQueue = [];
+                    roundNumber += 1;
+                    roundErrorCount = 0;
+                    feedbackText.textContent = '進入下一輪，錯誤單字會再次出現。';
+                } else {
+                    quizArea.style.display = 'none';
+                    feedbackText.textContent = `完成！答對 ${correctAnswers} 題，答錯 ${wrongAnswers} 題。請按重置重新練習。`;
+                    showStats();
+                    return;
+                }
+            }
+
+            currentWord = queue.shift();
+            currentChinese.textContent = currentWord.chinese;
+            answerInput.value = '';
+            answerInput.focus();
+            showStats();
+        }
+
+        function checkAnswer() {
+            if (!currentWord) {
+                return;
+            }
+
+            const userAnswer = normalizeAnswer(answerInput.value);
+            const correctAnswer = normalizeAnswer(currentWord.english);
+            doneAnswers += 1;
+            if (userAnswer && userAnswer === correctAnswer) {
+                correctAnswers += 1;
+                feedbackText.textContent = '答對了！繼續下一題。';
+            } else {
+                wrongAnswers += 1;
+                roundErrorCount += 1;
+                nextQueue.push(currentWord);
+                feedbackText.textContent = `答錯了。正確答案：${currentWord.english}`;
+            }
+
+            setTimeout(() => {
+                loadNextQuestion();
+            }, 400);
+        }
+
+        wordFile.addEventListener('change', event => {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = e => {
+                const rows = parseCSV(e.target.result || '');
+                const parsed = rows
+                    .map(row => row.map(cell => cell.trim()))
+                    .filter(row => row.length >= 2)
+                    .filter(row => {
+                        const first = row[0].toLowerCase();
+                        const second = row[1].toLowerCase();
+                        return !(first === '中文' || first === 'chinese' || second === 'english' || second === '英文');
+                    })
+                    .map(row => ({ chinese: row[0], english: row[1] }))
+                    .filter(item => item.chinese && item.english);
+
+                if (!parsed.length) {
+                    alert('檔案格式無效，請確認 CSV 內容為 A 欄中文、B 欄英文。');
+                    return;
+                }
+
+                words = parsed;
+                alert(`已載入 ${words.length} 個單字。開始練習！`);
+                resetQuiz();
+            };
+            reader.readAsText(file, 'UTF-8');
+        });
+
+        submitButton.addEventListener('click', () => {
+            checkAnswer();
+        });
+
+        answerInput.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                checkAnswer();
+            }
+        });
+
+        resetButton.addEventListener('click', () => {
+            resetQuiz();
+        });
+    </script>
+</body>
+</html>
