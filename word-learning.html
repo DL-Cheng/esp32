@@ -225,6 +225,7 @@
 
         <div class="footer-links">
             <button class="secondary-button" id="resetButton">重置遊戲</button>
+            <button class="secondary-button" id="reshuffleButton">重新洗牌</button>
             <a class="button" href="index.html">返回首頁</a>
         </div>
     </div>
@@ -244,6 +245,7 @@
         const remainingCount = document.getElementById('remainingCount');
         const roundErrors = document.getElementById('roundErrors');
         const resetButton = document.getElementById('resetButton');
+        const reshuffleButton = document.getElementById('reshuffleButton');
 
         let words = [];
         let queue = [];
@@ -437,6 +439,16 @@
 
         resetButton.addEventListener('click', () => {
             resetQuiz();
+        });
+
+        reshuffleButton.addEventListener('click', () => {
+            if (!queue.length) {
+                alert('目前沒有題目可以洗牌。請先上傳檔案並開始練習。');
+                return;
+            }
+            queue = shuffleArray(queue);
+            feedbackText.textContent = '已重新洗牌，題目順序已更新。';
+            showStats();
         });
     </script>
 </body>
