@@ -174,7 +174,7 @@
 
         <div class="control-panel">
             <div class="info-box">
-                <p>請上傳包含中文與英文的 CSV 檔案。第一欄為中文，第二欄為英文。若 CSV 含標題行，系統會自動略過。</p>
+                <p>請上傳包含中文與英文的 CSV 檔案。第一欄為中文，第二欄為英文。若 CSV 含標題行，系統會自動略過。建議儲存為 UTF-8 編碼，以避免中文亂碼。</p>
             </div>
 
             <label class="button" for="wordFile">上傳 word.csv</label>
@@ -254,6 +254,23 @@
         let wrongAnswers = 0;
         let doneAnswers = 0;
         let roundErrorCount = 0;
+
+        function getTextFromBuffer(buffer) {
+            const bytes = new Uint8Array(buffer);
+            let offset = 0;
+            if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) {
+                offset = 3;
+            }
+            const utf8Text = new TextDecoder('utf-8', { fatal: false }).decode(bytes.subarray(offset));
+            if (!utf8Text.includes('�')) {
+                return utf8Text;
+            }
+            try {
+                return new TextDecoder('big5', { fatal: false }).decode(bytes.subarray(offset));
+            } catch (error) {
+                return utf8Text;
+            }
+        }
 
         function parseCSV(text) {
             const rows = [];
@@ -382,9 +399,9 @@
             if (!file) {
                 return;
             }
-            const reader = new FileReader();
-            reader.onload = e => {
-                const rows = parseCSV(e.target.result || '');
+            file.arrayBuffer().then(buffer => {
+                const text = getTextFromBuffer(buffer);
+                const rows = parseCSV(text || '');
                 const parsed = rows
                     .map(row => row.map(cell => cell.trim()))
                     .filter(row => row.length >= 2)
@@ -404,8 +421,9 @@
                 words = parsed;
                 alert(`已載入 ${words.length} 個單字。開始練習！`);
                 resetQuiz();
-            };
-            reader.readAsText(file, 'UTF-8');
+            }).catch(() => {
+                alert('讀取檔案時發生錯誤，請確認 CSV 檔案可正常開啟。');
+            });
         });
 
         submitButton.addEventListener('click', () => {
