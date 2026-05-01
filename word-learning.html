@@ -247,7 +247,6 @@
 
         let words = [];
         let queue = [];
-        let nextQueue = [];
         let currentWord = null;
         let roundNumber = 0;
         let correctAnswers = 0;
@@ -329,13 +328,20 @@
             roundErrors.textContent = roundErrorCount;
         }
 
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
         function resetQuiz() {
             if (!words.length) {
                 alert('請先上傳 word.csv 以開始遊戲。');
                 return;
             }
-            queue = words.slice();
-            nextQueue = [];
+            queue = shuffleArray(words.slice());
             roundNumber = 1;
             correctAnswers = 0;
             wrongAnswers = 0;
@@ -350,18 +356,10 @@
 
         function loadNextQuestion() {
             if (queue.length === 0) {
-                if (nextQueue.length > 0) {
-                    queue = nextQueue.slice();
-                    nextQueue = [];
-                    roundNumber += 1;
-                    roundErrorCount = 0;
-                    feedbackText.textContent = '進入下一輪，錯誤單字會再次出現。';
-                } else {
-                    quizArea.style.display = 'none';
-                    feedbackText.textContent = `完成！答對 ${correctAnswers} 題，答錯 ${wrongAnswers} 題。請按重置重新練習。`;
-                    showStats();
-                    return;
-                }
+                quizArea.style.display = 'none';
+                feedbackText.textContent = `完成！答對 ${correctAnswers} 題，答錯 ${wrongAnswers} 題。請按重置重新練習。`;
+                showStats();
+                return;
             }
 
             currentWord = queue.shift();
@@ -385,7 +383,7 @@
             } else {
                 wrongAnswers += 1;
                 roundErrorCount += 1;
-                nextQueue.push(currentWord);
+                queue.push(currentWord);
                 feedbackText.textContent = `答錯了。正確答案：${currentWord.english}`;
             }
 
