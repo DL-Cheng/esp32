@@ -20,3 +20,23 @@
 
 ## 同步更新
 已經新增學習頁面並更新首頁按鈕連結，請使用 Git 推送變更到 GitHub。
+
+## Google AI Studio 代理使用說明
+1. 複製 `.env.example` 為 `.env`，並設定你的 `GOOGLE_API_KEY`：
+   ```bash
+   cp .env.example .env
+   ```
+2. 安裝相依套件：
+   ```bash
+   npm install
+   ```
+3. 啟動本地代理：
+   ```bash
+   npm start
+   ```
+4. 開啟瀏覽器並訪問：
+   ```
+   http://localhost:3000/apitest.html
+   ```
+
+`apitest.html` 會透過本地代理 `/api/ai` 呼叫 Google Generative Language API，避免在前端暴露 API Key。
