@@ -19,6 +19,8 @@ if (!MYAI_KEY && !GOOGLE_KEY) {
   console.warn('警告：未設定 MYAI_KEY 或 GOOGLE_API_KEY，請在啟動前設定其中一個。');
 }
 
+app.use(express.static('.'));
+
 app.post('/api/ai', async (req, res) => {
   const prompt = req.body.prompt || req.body.input || '';
 
@@ -35,8 +37,8 @@ app.post('/api/ai', async (req, res) => {
       const resp = await axios.post(url, body, { timeout: 20000 });
 
       // 嘗試擷取常見回傳欄位
-      const out = resp.data && (resp.data.candidates?.[0]?.output || resp.data.candidates?.[0]?.content || resp.data.output?.[0]?.content || JSON.stringify(resp.data));
-      res.status(resp.status).json({ provider: 'google', raw: resp.data, text: out });
+      const output = resp.data?.candidates?.[0]?.output || resp.data?.candidates?.[0]?.content || resp.data?.output?.[0]?.content || JSON.stringify(resp.data);
+      res.status(resp.status).json({ provider: 'google', raw: resp.data, text: output });
 
     } else if (MYAI_KEY) {
       // 使用原本的 myai168 代理方式
