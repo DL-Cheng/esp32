@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+MYAI_KEY="YOUR_DEV_KEY" npm start<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
@@ -63,25 +63,21 @@ document.getElementById('aiBtn').addEventListener('click', async function() {
 const resultDiv = document.getElementById('aiResult');
 resultDiv.innerText = "AI 正在思考中，請稍候...";
 
-// ⚠️ 請填入你取得的 API Key
-const apiKey = "HtI5GFmBC7CJrVk2fcKyHjXc-tMXyO6lGvMYAIWTBVI";
-const apiUrl = "https://www.myai168.com/stu/api/openai/v1/responses";
+// 注意：不要把 API Key 放在前端。請使用本地代理轉送請求。
+// 本示例會呼叫本專案下的本地代理路徑 `/api/ai`。
+const apiUrl = "/api/ai";
 
 // 組合你要傳給 AI 的內容 (前綴提示詞 + 模擬資料)
 const promptContent = `你是一個健康教練，請根據以下手錶/感測器回傳的數據，給予我簡短、鼓勵性的健康建議：\n${latestData}`;
 
 try {
-// 呼叫 API
+// 呼叫本地代理，代理會在 server 端附加 API Key 並轉送到遠端 API
 const response = await fetch(apiUrl, {
-method: 'POST',
-headers: {
-'Authorization': `Bearer ${apiKey}`,
-'Content-Type': 'application/json'
-},
-body: JSON.stringify({
-model: "gpt-5", // 依照你原本的參數設定
-input: promptContent
-})
+	method: 'POST',
+	headers: {
+		'Content-Type': 'application/json'
+	},
+	body: JSON.stringify({ prompt: promptContent })
 });
 
 if (!response.ok) {
@@ -110,7 +106,7 @@ resultDiv.innerText = aiText;
 
 } catch (error) {
 console.error("API 呼叫失敗：", error);
-resultDiv.innerText = "分析失敗，請檢查 API Key 是否正確，或是按 F12 查看 Console 是否有 CORS 錯誤。";
+resultDiv.innerText = "分析失敗，請啟動本地代理並在伺服器端設定 API Key，或按 F12 查看 Console 的錯誤細節。";
 }
 });
 </script>
