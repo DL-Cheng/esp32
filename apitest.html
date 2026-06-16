@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESP32 模擬資料與 AI 分析</title>
+<style>
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; line-height: 1.6; }
+.box { border: 1px solid #ccc; padding: 15px; border-radius: 8px; margin-bottom: 20px; background-color: #f9f9f9; }
+button { color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; font-size: 16px; margin-right: 10px; margin-bottom: 10px; }
+
+/* 不同按鈕的顏色 */
+#simBtn { background-color: #2196F3; } /* 藍色 */
+#simBtn:hover { background-color: #0b7dda; }
+
+#aiBtn { background-color: #4CAF50; } /* 綠色 */
+#aiBtn:hover { background-color: #45a049; }
+#aiBtn:disabled { background-color: #cccccc; cursor: not-allowed; }
+</style>
+</head>
+<body>
+
+<h2>ESP32 模擬資料與 AI 分析系統</h2>
+
+<!-- 加入一個按鈕來產生模擬資料 -->
+<button id="simBtn">📥 載入 ESP32 模擬資料</button>
+
+<div class="box">
+<h3>📡 來自 ESP32 的最新資料</h3>
+<p id="espData" style="color: gray;">請點擊上方按鈕載入資料...</p>
+</div>
+
+<button id="aiBtn" disabled>🤖 進行 AI 分析</button>
+
+<div class="box">
+<h3>💡 AI 分析結果</h3>
+<p id="aiResult">尚未進行分析。</p>
+</div>
+
+<script>
+let latestData = "";
+
+// ==========================================
+// 1. 模擬 ESP32 傳入資料
+// ==========================================
+document.getElementById('simBtn').addEventListener('click', function() {
+// 設定模擬資料
+latestData = "今日已完成30分鐘健走，總步數為8000步。";
+
+// 顯示在網頁上，並更改字體顏色提示已載入
+const espDataElement = document.getElementById('espData');
+espDataElement.innerText = latestData;
+espDataElement.style.color = "black";
+
+// 啟用 AI 分析按鈕
+document.getElementById('aiBtn').disabled = false;
+});
+
+// ==========================================
+// 2. AI 分析設定 (呼叫 API)
+// ==========================================
+document.getElementById('aiBtn').addEventListener('click', async function() {
+const resultDiv = document.getElementById('aiResult');
+resultDiv.innerText = "AI 正在思考中，請稍候...";
+
+// ⚠️ 請填入你取得的 API Key
+const apiKey = "HtI5GFmBC7CJrVk2fcKyHjXc-tMXyO6lGvMYAIWTBVI";
+const apiUrl = "https://www.myai168.com/stu/api/openai/v1/responses";
+
+// 組合你要傳給 AI 的內容 (前綴提示詞 + 模擬資料)
+const promptContent = `你是一個健康教練，請根據以下手錶/感測器回傳的數據，給予我簡短、鼓勵性的健康建議：\n${latestData}`;
+
+try {
+// 呼叫 API
+const response = await fetch(apiUrl, {
+method: 'POST',
+headers: {
+'Authorization': `Bearer ${apiKey}`,
+'Content-Type': 'application/json'
+},
+body: JSON.stringify({
+model: "gpt-5", // 依照你原本的參數設定
+input: promptContent
+})
+});
+
+if (!response.ok) {
+throw new Error(`HTTP 錯誤狀態碼: ${response.status}`);
+}
+
+// 解析 JSON 回傳結果
+const data = await response.json();
+console.log("API 回傳完整資料：", data);
+
+// 抓取文字內容 (考量到不同 API 可能的欄位名稱)
+let aiText = "無法解析回傳內容，請查看開發者工具(F12)的 Console。";
+
+if (data.choices && data.choices.length > 0 && data.choices[0].message) {
+aiText = data.choices[0].message.content; // 標準 OpenAI 格式
+} else if (data.response) {
+aiText = data.response; // 自訂 API 常見格式
+} else if (data.text) {
+aiText = data.text; // 另一種常見格式
+} else {
+aiText = JSON.stringify(data); // 預設顯示完整 JSON 以利除錯
+}
+
+// 顯示 AI 結果
+resultDiv.innerText = aiText;
+
+} catch (error) {
+console.error("API 呼叫失敗：", error);
+resultDiv.innerText = "分析失敗，請檢查 API Key 是否正確，或是按 F12 查看 Console 是否有 CORS 錯誤。";
+}
+});
+</script>
+</body>
+</html>
